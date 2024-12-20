@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
-import logo from "../assets/logoBB.png"; // Pastikan path sesuai dengan lokasi gambar Anda
+import logo from "../Assets/logoBB.png"; // Pastikan path sesuai dengan lokasi gambar Anda
 
 const Navbar = ({ isLoggedIn, onLogout, username, role }) => {
   const [showDropdown, setShowDropdown] = useState(false); // Toggle untuk dropdown
