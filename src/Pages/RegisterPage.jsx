@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import strawberryImage from "../assets/registerpage.jpg"; // Update the path as needed
+import strawberryImage from "../Assets/registerpage.jpg"; // Update the path as needed
 
 const RegisterPage = () => {
   const [name, setName] = useState("");

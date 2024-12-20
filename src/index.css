@@ -1,9 +1,12 @@
+/* Mengimpor font Poppins dari Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+/* Mengimpor file CSS untuk Leaflet */
 @import "leaflet/dist/leaflet.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* Mengimpor font Poppins dari Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
 /* Mengatur font seluruh aplikasi menggunakan Poppins */
 body {
