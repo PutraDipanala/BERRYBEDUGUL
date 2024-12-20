@@ -10,6 +10,12 @@ const HeroSection = () => {
   const data = [
     { id: "1", name: "Bali Strawberry Farm & Resto" },
     { id: "2", name: "Hidden Strawberry Garden" },
+    { id: "3", name: "Leon's Strawberry" },
+    { id: "4", name: "Moondy Strawberry" },
+    { id: "5", name: "Cukup Farm" },
+    { id: "6", name: "Amerta Agrow" },
+    { id: "7", name: "Nala Strawberry" },
+    { id: "8", name: "Wiwanda Agrow" },
   ];
 
   // Filter data berdasarkan pencarian

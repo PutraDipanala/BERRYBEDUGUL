@@ -19,6 +19,7 @@ import RegisterPage from "./Pages/RegisterPage";
 import AdminDashboard from "./Pages/AdminDashboard";
 import ManageArticles from "./Pages/ManageArticles";
 import ManageGardens from "./Pages/ManageGardens";
+import GardenForm from "./Components/GardenForm"; // Pastikan path benar
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -43,11 +44,11 @@ const App = () => {
       });
       setUsername(res.data.username);
       setRole(res.data.role); // Ambil role dari respons backend
+      setIsLoggedIn(true);
     } catch (error) {
       console.error("Validasi gagal:", error);
       setIsLoggedIn(false);
     } finally {
-      setIsLoggedIn(true);
       setIsLoading(false); // Set loading selesai setelah fetch selesai
     }
   };
@@ -69,6 +70,27 @@ const App = () => {
     setRole(""); // Reset role
   };
 
+  const handleCreateGarden = async (formData) => {
+    try {
+      const token = localStorage.getItem("authToken"); // Ambil token dari localStorage
+      const response = await axios.post(
+        "http://localhost:3001/api/admin/gardens",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      alert("Kebun berhasil ditambahkan!");
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Gagal menambahkan kebun:", error);
+      alert("Gagal menambahkan kebun. Periksa koneksi atau backend Anda.");
+    }
+  };
+
   if (isLoading) {
     // Tampilkan indikator loading saat data user sedang di-fetch
     return <div>Loading...</div>;
@@ -80,6 +102,7 @@ const App = () => {
         onLogout={handleLogout}
         isLoggedIn={isLoggedIn}
         username={username}
+        role={role} // Tambahkan role sebagai prop
       />
       <Routes>
         {/* Halaman Publik */}
@@ -93,53 +116,23 @@ const App = () => {
         {/* Halaman User */}
         <Route
           path="/kebun"
-          element={
-            isLoggedIn && role === "user" ? (
-              <KebunStroberi />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
+          element={isLoggedIn ? <KebunStroberi /> : <Navigate to="/login" />}
         />
         <Route
           path="/kebun/:id"
-          element={
-            isLoggedIn && role === "user" ? (
-              <DetailKebun />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
+          element={isLoggedIn ? <DetailKebun /> : <Navigate to="/login" />}
         />
         <Route
           path="/about"
-          element={
-            isLoggedIn && role === "user" ? (
-              <AboutUs />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
+          element={isLoggedIn ? <AboutUs /> : <Navigate to="/login" />}
         />
         <Route
           path="/artikel"
-          element={
-            isLoggedIn && role === "user" ? (
-              <Articles />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
+          element={isLoggedIn ? <Articles /> : <Navigate to="/login" />}
         />
         <Route
           path="/artikel/:id"
-          element={
-            isLoggedIn && role === "user" ? (
-              <ArticleDetail />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
+          element={isLoggedIn ? <ArticleDetail /> : <Navigate to="/login" />}
         />
 
         {/* Halaman Admin */}
@@ -168,6 +161,16 @@ const App = () => {
           element={
             isLoggedIn && role === "admin" ? (
               <ManageGardens />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/admin/gardens/create"
+          element={
+            isLoggedIn && role === "admin" ? (
+              <GardenForm onSubmit={handleCreateGarden} />
             ) : (
               <Navigate to="/login" />
             )

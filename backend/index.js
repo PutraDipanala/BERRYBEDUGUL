@@ -16,7 +16,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Enable CORS untuk semua domain
 app.use(cors());
 
-// Daftarkan rute untuk autentikasi dan feedback
+// Middleware untuk mengakses file statis dari folder public/uploads
+app.use("/uploads", express.static("public/uploads")); // Folder untuk gambar yang di-upload
+
+// Daftarkan rute untuk autentikasi, feedback, dan admin
 app.use("/api/auth", authRouter);
 app.use("/api/feedback", feedbackRouter); // Pastikan feedback.js terdaftar dengan benar
 app.use("/api/admin", adminRouter);

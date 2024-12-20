@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import logo from "../assets/logoBB.png"; // Pastikan path sesuai dengan lokasi gambar Anda
 
-const Navbar = ({ isLoggedIn, onLogout, username }) => {
+const Navbar = ({ isLoggedIn, onLogout, username, role }) => {
   const [showDropdown, setShowDropdown] = useState(false); // Toggle untuk dropdown
   const dropdownRef = useRef(null); // Referensi ke dropdown
   const userIconRef = useRef(null); // Referensi ke icon pengguna
+  const navigate = useNavigate(); // Untuk navigasi ke halaman lain
 
   // Menutup dropdown ketika mengklik di luar icon pengguna atau dropdown
   useEffect(() => {
@@ -90,12 +91,20 @@ const Navbar = ({ isLoggedIn, onLogout, username }) => {
                 <span className="ml-2">{username || "Pengguna"}</span>
               </div>
 
-              {/* Dropdown logout */}
+              {/* Dropdown untuk admin dan user */}
               {showDropdown && (
                 <div
                   ref={dropdownRef}
                   className="absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg z-10"
                 >
+                  {role === "admin" && (
+                    <button
+                      onClick={() => navigate("/admin")}
+                      className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                    >
+                      Website Setting
+                    </button>
+                  )}
                   <button
                     onClick={onLogout}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-200"

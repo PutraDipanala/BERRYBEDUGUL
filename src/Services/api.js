@@ -8,7 +8,7 @@ const getAuthHeader = () => {
   return { Authorization: `Bearer ${token}` };
 };
 
-// Fungsi untuk mendapatkan semua artikel
+// CRUD untuk Artikel
 export const fetchArticles = async () => {
   const response = await axios.get(`${API_URL}/admin/articles`, {
     headers: getAuthHeader(),
@@ -16,37 +16,71 @@ export const fetchArticles = async () => {
   return response.data;
 };
 
-// Fungsi untuk mendapatkan artikel berdasarkan ID
-export const fetchArticleById = async (id) => {
-  const response = await axios.get(`${API_URL}/admin/articles/${id}`, {
-    headers: getAuthHeader(),
-  });
-  return response.data;
-};
-
-// Fungsi untuk menambahkan artikel
 export const createArticle = async (articleData) => {
   const response = await axios.post(`${API_URL}/admin/articles`, articleData, {
-    headers: getAuthHeader(),
+    headers: {
+      ...getAuthHeader(),
+      "Content-Type": "multipart/form-data", // Tambahkan header untuk multipart
+    },
   });
   return response.data;
 };
 
-// Fungsi untuk memperbarui artikel
 export const updateArticle = async (id, articleData) => {
   const response = await axios.put(
     `${API_URL}/admin/articles/${id}`,
     articleData,
     {
-      headers: getAuthHeader(),
+      headers: {
+        ...getAuthHeader(),
+        "Content-Type": "multipart/form-data", // Tambahkan header untuk multipart
+      },
     }
   );
   return response.data;
 };
 
-// Fungsi untuk menghapus artikel
 export const deleteArticle = async (id) => {
   const response = await axios.delete(`${API_URL}/admin/articles/${id}`, {
+    headers: getAuthHeader(),
+  });
+  return response.data;
+};
+
+// CRUD untuk Kebun Stroberi
+export const fetchGardens = async () => {
+  const response = await axios.get(`${API_URL}/admin/gardens`, {
+    headers: getAuthHeader(),
+  });
+  return response.data;
+};
+
+export const createGarden = async (gardenData) => {
+  const response = await axios.post(`${API_URL}/admin/gardens`, gardenData, {
+    headers: {
+      ...getAuthHeader(),
+      "Content-Type": "multipart/form-data", // Tambahkan header untuk multipart
+    },
+  });
+  return response.data;
+};
+
+export const updateGarden = async (id, gardenData) => {
+  const response = await axios.put(
+    `${API_URL}/admin/gardens/${id}`,
+    gardenData,
+    {
+      headers: {
+        ...getAuthHeader(),
+        "Content-Type": "multipart/form-data", // Tambahkan header untuk multipart
+      },
+    }
+  );
+  return response.data;
+};
+
+export const deleteGarden = async (id) => {
+  const response = await axios.delete(`${API_URL}/admin/gardens/${id}`, {
     headers: getAuthHeader(),
   });
   return response.data;

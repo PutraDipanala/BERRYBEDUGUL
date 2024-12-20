@@ -1,133 +1,185 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { createGarden, updateGarden, getGardenById } from "../Services/api";
+import React, { useState } from "react";
 
-const GardenForm = () => {
-  const [garden, setGarden] = useState({
+const GardenForm = ({ onSubmit }) => {
+  const [formData, setFormData] = useState({
     name: "",
-    operationalHours: "",
-    price: "",
     location: "",
-    headerImage: "",
-    gallery: ["", "", ""], // Minimal 3 gambar
+    price: "",
+    openingHoursWeekdays: { start: "", end: "" },
+    openingHoursWeekend: { start: "", end: "" },
+    facilities: "",
+    description: "",
+    headerImage: null,
+    galleryImages: [],
   });
 
-  const navigate = useNavigate();
-  const { id } = useParams();
-
-  useEffect(() => {
-    if (id) {
-      const fetchGarden = async () => {
-        const data = await getGardenById(id);
-        setGarden(data);
-      };
-      fetchGarden();
-    }
-  }, [id]);
-
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setGarden({ ...garden, [name]: value });
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleGalleryChange = (index, value) => {
-    const updatedGallery = [...garden.gallery];
-    updatedGallery[index] = value;
-    setGarden({ ...garden, gallery: updatedGallery });
+  const handleNestedChange = (e, category) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [category]: {
+        ...prevData[category],
+        [name]: value,
+      },
+    }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (id) {
-      await updateGarden(id, garden);
-      alert("Kebun berhasil diperbarui!");
-    } else {
-      await createGarden(garden);
-      alert("Kebun berhasil ditambahkan!");
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    if (name === "headerImage") {
+      setFormData((prevData) => ({ ...prevData, headerImage: files[0] }));
+    } else if (name === "galleryImages") {
+      setFormData((prevData) => ({ ...prevData, galleryImages: files }));
     }
-    navigate("/admin/gardens");
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (typeof onSubmit === "function") {
+      onSubmit(formData); // Pastikan `onSubmit` adalah fungsi sebelum dipanggil
+    } else {
+      console.error("onSubmit is not a function");
+    }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">
-        {id ? "Edit Kebun Stroberi" : "Tambah Kebun Baru"}
-      </h1>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block font-bold mb-2">Nama Kebun</label>
-          <input
-            type="text"
-            name="name"
-            value={garden.name}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block font-bold mb-2">Jam Operasional</label>
-          <input
-            type="text"
-            name="operationalHours"
-            value={garden.operationalHours}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block font-bold mb-2">Harga Tiket</label>
-          <input
-            type="number"
-            name="price"
-            value={garden.price}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block font-bold mb-2">Lokasi</label>
-          <input
-            type="text"
-            name="location"
-            value={garden.location}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block font-bold mb-2">URL Foto Header</label>
-          <input
-            type="text"
-            name="headerImage"
-            value={garden.headerImage}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block font-bold mb-2">
-            Galeri (Minimal 3 Gambar)
-          </label>
-          {garden.gallery.map((image, index) => (
-            <input
-              key={index}
-              type="text"
-              value={image}
-              onChange={(e) => handleGalleryChange(index, e.target.value)}
-              className="w-full p-2 border rounded mb-2"
-              placeholder={`Gambar ${index + 1}`}
-            />
-          ))}
-        </div>
-        <button type="submit" className="p-3 bg-green-600 text-white rounded">
-          {id ? "Simpan Perubahan" : "Tambah Kebun"}
-        </button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Tambah Kebun</h2>
+
+      {/* Nama Kebun */}
+      <label className="block mb-2 font-bold">Nama Kebun</label>
+      <input
+        type="text"
+        name="name"
+        value={formData.name}
+        onChange={handleInputChange}
+        className="w-full p-2 border mb-4"
+        placeholder="Masukkan nama kebun"
+        required
+      />
+
+      {/* Lokasi */}
+      <label className="block mb-2 font-bold">Lokasi</label>
+      <input
+        type="text"
+        name="location"
+        value={formData.location}
+        onChange={handleInputChange}
+        className="w-full p-2 border mb-4"
+        placeholder="Masukkan lokasi kebun"
+        required
+      />
+
+      {/* Harga */}
+      <label className="block mb-2 font-bold">Harga</label>
+      <input
+        type="number"
+        name="price"
+        value={formData.price}
+        onChange={handleInputChange}
+        className="w-full p-2 border mb-4"
+        placeholder="Masukkan harga per orang"
+        required
+      />
+
+      {/* Jam Operasional */}
+      <label className="block mb-2 font-bold">Jam Operasional</label>
+      <div className="mb-4">
+        <p className="mb-1">Senin - Jumat</p>
+        <input
+          type="time"
+          name="start"
+          value={formData.openingHoursWeekdays.start}
+          onChange={(e) => handleNestedChange(e, "openingHoursWeekdays")}
+          className="p-2 border mr-2"
+        />
+        <input
+          type="time"
+          name="end"
+          value={formData.openingHoursWeekdays.end}
+          onChange={(e) => handleNestedChange(e, "openingHoursWeekdays")}
+          className="p-2 border"
+        />
+      </div>
+      <div className="mb-4">
+        <p className="mb-1">Sabtu - Minggu</p>
+        <input
+          type="time"
+          name="start"
+          value={formData.openingHoursWeekend.start}
+          onChange={(e) => handleNestedChange(e, "openingHoursWeekend")}
+          className="p-2 border mr-2"
+        />
+        <input
+          type="time"
+          name="end"
+          value={formData.openingHoursWeekend.end}
+          onChange={(e) => handleNestedChange(e, "openingHoursWeekend")}
+          className="p-2 border"
+        />
+      </div>
+
+      {/* Fasilitas */}
+      <label className="block mb-2 font-bold">Fasilitas</label>
+      <textarea
+        name="facilities"
+        value={formData.facilities}
+        onChange={handleInputChange}
+        className="w-full p-2 border mb-4"
+        placeholder="Masukkan fasilitas, pisahkan dengan koma"
+        required
+      ></textarea>
+
+      {/* Deskripsi */}
+      <label className="block mb-2 font-bold">Deskripsi Kebun</label>
+      <textarea
+        name="description"
+        value={formData.description}
+        onChange={handleInputChange}
+        className="w-full p-2 border mb-4"
+        placeholder="Masukkan deskripsi kebun"
+        required
+      ></textarea>
+
+      {/* Gambar Header Kebun */}
+      <label className="block mb-2 font-bold">Gambar Header Kebun</label>
+      <input
+        type="file"
+        name="headerImage"
+        onChange={handleFileChange}
+        className="w-full p-2 border mb-4"
+        accept="image/*"
+        required
+      />
+
+      {/* Galeri Kebun */}
+      <label className="block mb-2 font-bold">Galeri Kebun</label>
+      <input
+        type="file"
+        name="galleryImages"
+        onChange={handleFileChange}
+        className="w-full p-2 border mb-4"
+        accept="image/*"
+        multiple
+        required
+      />
+
+      {/* Tombol Submit */}
+      <button
+        type="submit"
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Simpan
+      </button>
+    </form>
   );
 };
 
